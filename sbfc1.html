@@ -33,7 +33,7 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
-      position: relative; /* For fixed footer/history button */
+      position: fixed; /* For fixed footer/history button */
       /* CRITICAL FIX: Ensure the mobile screen strictly takes up the available height */
       height: 100%; 
     }
@@ -66,11 +66,11 @@
 
     /* Style the floating history button */
     .history-button {
-      position: absolute;
+      position: fixed;
       right: 1.5rem;
       /* Adjusted to align closer to the bottom action bar */
-      bottom: 1.5rem; 
-      z-index: 10;
+      bottom: 2rem; 
+      z-index: index 50;
     }
 
     /* Icon circle background */
@@ -139,6 +139,22 @@
     .peer:checked + .toggle-track > .toggle-handle > .icon-unmasked {
         opacity: 1;
     }
+    
+    /* Custom purple card background */
+    .purple-card-bg {
+        background-color: #f3f3fd; /* A very light purple/off-white */
+    }
+
+    /* Custom blue card background for Loan Details (matching general theme) */
+    .loan-card-bg {
+        background-color: #ebf5ff; /* A very light blue */
+        border: 1px solid #cceeff;
+    }
+    /* Custom co-applicant card background (similar to guarantor/default for PII) */
+    .coapplicant-card-bg {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+    }
   </style>
   <script>
     tailwind.config = {
@@ -180,18 +196,451 @@
 
     <!-- Navigation Tabs (Scrollbar Hidden via CSS in <style> block) -->
     <nav class="bg-white flex border-b border-gray-200 overflow-x-auto whitespace-nowrap flex-shrink-0" id="navTabs">
-      <div id="tab-applicant" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('applicant')">APPLICANT DETAILS</div>
-      <div id="tab-guarantor" class="flex-shrink-0 px-4 py-3 text-sm border-b-2 tab-active tab-item" onclick="switchView('guarantor')">GUARANTOR DETAILS</div>
-      <div id="tab-additional" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('additional')">ADDITIONAL DETAILS</div>
+        <!-- 1. Predictions (Active by Default) -->
+        <div id="tab-predictions" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('predictions')">PREDICTIONS</div>
+        <!-- 2. Dues & Charges -->
+        <div id="tab-dues" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('dues')">DUES & CHARGES</div>
+        <!-- 3. Loan Details -->
+        <div id="tab-loan" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('loan')">LOAN DETAILS</div>
+        <!-- 4. Communication Details -->
+        <div id="tab-communication" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('communication')">COMMUNICATION DETAILS</div>
+        <!-- 5. Co-applicant Details (New View) -->
+        <div id="tab-coapplicant" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('coapplicant')">CO-APPLICANT DETAILS</div>
+        <!-- 6. Guarantor Details -->
+        <div id="tab-guarantor" class="flex-shrink-0 px-4 py-3 text-sm border-b-2 border-transparent tab-item" onclick="switchView('guarantor')">GUARANTOR DETAILS</div>
+        <!-- 7. Additional Details 1 -->
+        <div id="tab-additional1" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('additional1')">ADDITIONAL DETAILS 1</div>
+        <!-- 8. Additional Details 2 -->
+        <div id="tab-additional2" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('additional2')">ADDITIONAL DETAILS 2</div>
+        <!-- 9. Legal -->
+        <div id="tab-legal" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('legal')">LEGAL</div>
     </nav>
     
     <!-- Main Content Area - Scrollable Area -->
     <main class="flex-grow p-4 overflow-y-auto relative pb-20"> 
 
         <!-- ============================================== -->
-        <!-- VIEW 1: GUARANTOR DETAILS (Default View) -->
+        <!-- VIEW 1: PREDICTIONS -->
         <!-- ============================================== -->
-        <div id="guarantorView">
+        <div id="predictionsView" class="hidden"> 
+            <div class="bg-white p-5 rounded-xl shadow-lg space-y-4">
+                
+                <!-- Header & Toggle Button (Predictions) -->
+                <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+                    <div class="flex items-center">
+                        <h2 class="text-base font-bold text-gray-800 mr-2">PREDICTIONS</h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 cursor-help">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4"></path>
+                            <path d="M12 8h.01"></path>
+                        </svg>
+                    </div>
+
+                    <!-- START: ICON-BASED TOGGLE SWITCH (Predictions) -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleSwitchPredictions" aria-label="Toggle sensitive data visibility" class="sr-only peer">
+                        <div class="toggle-track">
+                            <div class="toggle-handle">
+                                <!-- Closed Eye (Masked/Default) -->
+                                <svg class="icon-masked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                    <path d="M6.61 6.61A13.16 13.16 0 0 0 2 12s3 7 10 7a9.76 9.76 0 0 0 5.44-1.6"></path>
+                                    <line x1="2" y1="2" x2="22" y2="22"></line>
+                                </svg>
+                                <!-- Open Eye (Unmasked) -->
+                                <svg class="icon-unmasked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </label>
+                    <!-- END: ICON-BASED TOGGLE SWITCH -->
+                </div>
+
+                <!-- Prediction Details List -->
+                <dl class="text-sm space-y-3">
+                    <!-- Best Time to Collect -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-500">Best Time to Collect</dt>
+                        <dd id="timePredictions" class="text-gray-900 font-semibold">5 PM - 7 PM</dd>
+                    </div>
+
+                    <!-- Best Recommended Date Range to Collect -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-500">Best Recommended Date Range to Collect</dt>
+                        <dd id="dateRangePredictions" class="text-gray-900 font-semibold text-right">24-09-2025 To 30-09-2025</dd>
+                    </div>
+
+                    <!-- Best Day to Collect -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-500">Best Day to Collect</dt>
+                        <dd id="dayPredictions" class="text-gray-900 font-semibold">28-09-2025</dd>
+                    </div>
+
+                    <!-- Who will Pay (Not sensitive) -->
+                    <div class="flex justify-between items-center border-t pt-3 mt-3 border-gray-100">
+                        <dt class="text-gray-500">Who will Pay</dt>
+                        <dd class="text-gray-900 font-semibold">Kaustubh Chaudhry</dd>
+                    </div>
+
+                    <!-- Preferred Location -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-500">Preferred Location</dt>
+                        <dd id="loc1Predictions" class="text-gray-900 font-semibold flex items-center">
+                            Home 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 ml-1">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </dd>
+                    </div>
+
+                    <!-- 2nd Preferred Location -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-500">2nd Preferred Location</dt>
+                        <dd id="loc2Predictions" class="text-gray-900 font-semibold flex items-center">
+                            Office 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 ml-1">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </dd>
+                    </div>
+
+                    <!-- Preferred Payment Type (Not sensitive) -->
+                    <div class="flex justify-between items-center border-t pt-3 mt-3 border-gray-100">
+                        <dt class="text-gray-500">Preferred Payment Type</dt>
+                        <dd class="text-gray-900 font-semibold">Full</dd>
+                    </div>
+
+                    <!-- Preferred Payment Mode (Not sensitive) -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-500">Preferred Payment Mode</dt>
+                        <dd class="text-gray-900 font-semibold">CHEQUE</dd>
+                    </div>
+                </dl>
+                
+                <!-- Summary Callout -->
+                <div class="bg-yellow-50 text-yellow-800 p-4 rounded-lg text-xs mt-4 font-medium">
+                    <p id="summaryPredictionsText">Collect **CHEQUE** from **Kaustubh Chaudhry** from **Home** on **28-09-2025** between **5 PM - 7 PM**.</p>
+                </div>
+
+                <!-- Re-masking notification -->
+                <small id="footPredictions" class="text-xs text-red-600 mt-4 pt-2 border-t block font-medium" aria-live="polite"></small>
+                
+            </div>
+        </div>
+        
+        <!-- ============================================== -->
+        <!-- VIEW 2: DUES & CHARGES -->
+        <!-- ============================================== -->
+        <div id="duesView" class="hidden"> 
+            <div class="space-y-4">
+                
+                <!-- CARD 1: TOTAL AMOUNT & EMI/PMI -->
+                <div class="purple-card-bg p-5 rounded-xl shadow-lg space-y-4">
+                    <!-- Total Amount Header -->
+                    <div class="flex justify-between items-center pb-3 border-b border-indigo-200/50">
+                        <h2 class="text-base font-bold text-indigo-800">Total Amount</h2>
+                        <span class="text-base font-bold text-indigo-800">Rs 10953</span>
+                    </div>
+
+                    <!-- EMI/PMI Details -->
+                    <dl class="text-sm space-y-3">
+                        <div class="flex justify-between items-center">
+                            <dt class="text-gray-600">EMI/PMI</dt>
+                            <dd class="text-gray-900 font-medium">Rs 100</dd>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-gray-600">Previous Month EMI/PMI</dt>
+                            <dd class="text-gray-900 font-medium">Rs 10244.34</dd>
+                        </div>
+                        <!-- Total EMI/PMI Amount (Bolded line) -->
+                        <div class="flex justify-between items-center pt-2 border-t border-indigo-200/50">
+                            <dt class="text-indigo-900 font-extrabold">Total Emi Pmi Amount</dt>
+                            <dd class="text-indigo-900 font-extrabold">Rs 10344</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- CARD 2: CHARGES BREAKDOWN -->
+                <div class="purple-card-bg p-5 rounded-xl shadow-lg space-y-4">
+                    <!-- Charges Details -->
+                    <dl class="text-sm space-y-3">
+                        <div class="flex justify-between items-center">
+                            <dt class="text-gray-600">Cheque Bouncing charges</dt>
+                            <dd class="text-gray-900 font-medium">Rs 99</dd>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-gray-600">Cash Handling charges</dt>
+                            <dd class="text-gray-900 font-medium">Rs 100</dd>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-gray-600">Part Payment</dt>
+                            <dd class="text-gray-900 font-medium">Rs 102</dd>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-gray-600">Foreclosure Charges</dt>
+                            <dd class="text-gray-900 font-medium">Rs 101</dd>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-gray-600">SOA Charges</dt>
+                            <dd class="text-gray-900 font-medium">Rs 104</dd>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-gray-600">FCL Issuance charges</dt>
+                            <dd class="text-gray-900 font-medium">Rs 103</dd>
+                        </div>
+                        <!-- Total Charges Amount (Bolded line) -->
+                        <div class="flex justify-between items-center pt-2 border-t border-indigo-200/50 mt-4">
+                            <dt class="text-indigo-900 font-extrabold">Total Charges Amount</dt>
+                            <dd class="text-indigo-900 font-extrabold">Rs 609</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ============================================== -->
+        <!-- VIEW 3: LOAN DETAILS -->
+        <!-- ============================================== -->
+        <div id="loanView" class="hidden"> 
+            <div class="loan-card-bg p-5 rounded-xl shadow-lg space-y-4">
+                
+                <!-- Main Loan Details -->
+                <dl class="text-sm space-y-3">
+                    <!-- Total Loan O/S -->
+                    <div class="flex justify-between items-center pb-2 border-b border-blue-200/50">
+                        <dt class="text-gray-600">Total Loan O/S</dt>
+                        <dd class="text-gray-900 font-bold">₹ 100004</dd>
+                    </div>
+
+                    <!-- Principal Balance -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">Principal Balance</dt>
+                        <dd class="text-gray-900 font-medium">₹ 6500004</dd>
+                    </div>
+
+                    <!-- EMI Amount -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">EMI Amount</dt>
+                        <dd class="text-gray-900 font-medium">₹ 5004</dd>
+                    </div>
+
+                    <!-- EMI Due Date -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">EMI Due Date</dt>
+                        <dd class="text-red-600 font-medium">15-10-2024</dd>
+                    </div>
+                    
+                    <!-- Bucket Type -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">Bucket Type</dt>
+                        <dd class="text-gray-900 font-medium">2</dd>
+                    </div>
+
+                    <!-- Loan Branch -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">Loan Branch</dt>
+                        <dd class="text-gray-900 font-medium">MUMBAI</dd>
+                    </div>
+                    
+                    <!-- Tenure -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">Tenure</dt>
+                        <dd class="text-gray-900 font-medium">19</dd>
+                    </div>
+                </dl>
+                
+                <!-- Last Instrument Details -->
+                <dl class="text-sm space-y-3 pt-4 border-t border-blue-200/50">
+                    <h3 class="text-sm font-semibold text-blue-700 mb-2">Last Payment Details</h3>
+                    <!-- Last Instrument Type -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">Last Instrument Type</dt>
+                        <dd class="text-gray-900 font-medium">CHEQUE</dd>
+                    </div>
+
+                    <!-- Last Instrument Date -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">Last Instrument Date</dt>
+                        <dd class="text-gray-900 font-medium">28-02-2023</dd>
+                    </div>
+                </dl>
+
+                <!-- Group Details -->
+                <dl class="text-sm space-y-3 pt-4 border-t border-blue-200/50">
+                    <h3 class="text-sm font-semibold text-blue-700 mb-2">Portfolio Grouping</h3>
+                    <!-- Group -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">Group</dt>
+                        <dd class="text-gray-900 font-medium">Malad</dd>
+                    </div>
+
+                    <!-- SubGroup -->
+                    <div class="flex justify-between items-center">
+                        <dt class="text-gray-600">SubGroup</dt>
+                        <dd class="text-gray-900 font-medium">Kachpada</dd>
+                    </div>
+                </dl>
+                
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 4: CO-APPLICANT DETAILS (New View) -->
+        <!-- ============================================== -->
+        <div id="coapplicantView" class="hidden">
+            <h2 class="text-base font-semibold text-blue-600 mb-4 px-2 border-l-4 border-blue-600 pl-2">CO-APPLICANT DETAILS</h2>
+            
+            <!-- CO-APPLICANT CARD 1 -->
+            <div class="coapplicant-card-bg p-5 rounded-xl shadow-lg space-y-5 mb-6">
+                
+                <!-- Name & Toggle Button (Co-applicant 1) -->
+                <div class="flex justify-between items-center">
+                    <p class="text-lg font-bold text-gray-800">Aman Vishwakarma</p>
+                    <!-- START: ICON-BASED TOGGLE SWITCH (Co-applicant 1) -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleSwitchCoApp1" aria-label="Toggle sensitive data visibility for Co-applicant 1" class="sr-only peer">
+                        <div class="toggle-track">
+                            <div class="toggle-handle">
+                                <!-- Closed Eye (Masked/Default) -->
+                                <svg class="icon-masked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                    <path d="M6.61 6.61A13.16 13.16 0 0 0 2 12s3 7 10 7a9.76 9.76 0 0 0 5.44-1.6"></path>
+                                    <line x1="2" y1="2" x2="22" y2="22"></line>
+                                </svg>
+                                <!-- Open Eye (Unmasked) -->
+                                <svg class="icon-unmasked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </label>
+                    <!-- END: ICON-BASED TOGGLE SWITCH -->
+                </div>
+                
+                <!-- Address -->
+                <div class="flex justify-between items-start pt-2 border-t border-gray-100">
+                    <p id="addrCoApp1" class="text-gray-700 font-medium pr-4">602, 6th Floor, Agrawal B6B Centre Building, Near Malad Industrial Estate</p>
+                    <div class="icon-circle map-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Phone -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="phoneCoApp1" class="text-gray-700 font-medium">9078998878</p>
+                    <div class="icon-circle call-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.5-4.5A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="emailCoApp1" class="text-gray-700 font-medium">aman@gmail.com</p>
+                    <div class="icon-circle mail-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Relation (Non-sensitive) -->
+                <div class="pt-2 border-t border-gray-100">
+                    <p class="text-gray-700 font-medium">Brother</p>
+                </div>
+                
+                <!-- Re-masking notification -->
+                <small id="footCoApp1" class="text-xs text-red-600 mt-4 pt-2 border-t block font-medium" aria-live="polite"></small>
+            </div>
+
+            <!-- CO-APPLICANT CARD 2 -->
+            <div class="coapplicant-card-bg p-5 rounded-xl shadow-lg space-y-5">
+                
+                <!-- Name & Toggle Button (Co-applicant 2) -->
+                <div class="flex justify-between items-center">
+                    <p class="text-lg font-bold text-gray-800">Aman Sharma</p>
+                    <!-- START: ICON-BASED TOGGLE SWITCH (Co-applicant 2) -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleSwitchCoApp2" aria-label="Toggle sensitive data visibility for Co-applicant 2" class="sr-only peer">
+                        <div class="toggle-track">
+                            <div class="toggle-handle">
+                                <!-- Closed Eye (Masked/Default) -->
+                                <svg class="icon-masked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                    <path d="M6.61 6.61A13.16 13.16 0 0 0 2 12s3 7 10 7a9.76 9.76 0 0 0 5.44-1.6"></path>
+                                    <line x1="2" y1="2" x2="22" y2="22"></line>
+                                </svg>
+                                <!-- Open Eye (Unmasked) -->
+                                <svg class="icon-unmasked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </label>
+                    <!-- END: ICON-BASED TOGGLE SWITCH -->
+                </div>
+                
+                <!-- Address -->
+                <div class="flex justify-between items-start pt-2 border-t border-gray-100">
+                    <p id="addrCoApp2" class="text-gray-700 font-medium pr-4">602, 6th Floor, Agrawal B6B Centre Building, Near Malad Industrial Estate</p>
+                    <div class="icon-circle map-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Phone -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="phoneCoApp2" class="text-gray-700 font-medium">9078998878</p>
+                    <div class="icon-circle call-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.5-4.5A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="emailCoApp2" class="text-gray-700 font-medium">aman@gmail.com</p>
+                    <div class="icon-circle mail-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Relation (Non-sensitive) -->
+                <div class="pt-2 border-t border-gray-100">
+                    <p class="text-gray-700 font-medium">Brother</p>
+                </div>
+                
+                <!-- Re-masking notification -->
+                <small id="footCoApp2" class="text-xs text-red-600 mt-4 pt-2 border-t block font-medium" aria-live="polite"></small>
+            </div>
+        </div>
+
+
+        <!-- ============================================== -->
+        <!-- VIEW 5: GUARANTOR DETAILS -->
+        <!-- ============================================== -->
+        <div id="guarantorView" class="hidden">
             <h2 class="text-base font-semibold text-blue-600 mb-4 px-2 border-l-4 border-blue-600 pl-2">GUARANTOR 1</h2>
             
             <!-- Guarantor Card -->
@@ -267,7 +716,7 @@
         </div>
 
         <!-- ============================================== -->
-        <!-- VIEW 2: ADDITIONAL DETAILS (Hidden by Default) -->
+        <!-- VIEW 6: ADDITIONAL DETAILS 1 -->
         <!-- ============================================== -->
         <div id="additionalView" class="hidden">
             <h2 class="text-base font-semibold text-blue-600 mb-4 px-2 border-l-4 border-blue-600 pl-2">FINANCIAL DETAILS</h2>
@@ -361,43 +810,97 @@
   // 1. DATA AND ELEMENT MAPPING
   // ===============================================
 
-  // Guarantor Elements (Updated to reference the new input)
+  // --- Predictions Elements ---
+  const toggleSwitchPredictions = document.getElementById('toggleSwitchPredictions');
+  const timePredictions = document.getElementById('timePredictions');
+  const dateRangePredictions = document.getElementById('dateRangePredictions');
+  const dayPredictions = document.getElementById('dayPredictions');
+  const loc1Predictions = document.getElementById('loc1Predictions');
+  const loc2Predictions = document.getElementById('loc2Predictions');
+  const summaryPredictionsText = document.getElementById('summaryPredictionsText');
+  const footPredictions = document.getElementById('footPredictions');
+
+  // --- Guarantor Elements ---
   const toggleSwitchGuarantor = document.getElementById('toggleSwitchGuarantor');
   const addrGuarantor = document.getElementById('addrGuarantor');
   const phoneGuarantor = document.getElementById('phoneGuarantor');
   const emailGuarantor = document.getElementById('emailGuarantor');
   const footGuarantor = document.getElementById('footGuarantor');
 
-  // Additional Elements (Updated to reference the new input)
+  // --- Co-applicant 1 Elements ---
+  const toggleSwitchCoApp1 = document.getElementById('toggleSwitchCoApp1');
+  const addrCoApp1 = document.getElementById('addrCoApp1');
+  const phoneCoApp1 = document.getElementById('phoneCoApp1');
+  const emailCoApp1 = document.getElementById('emailCoApp1');
+  const footCoApp1 = document.getElementById('footCoApp1');
+
+  // --- Co-applicant 2 Elements ---
+  const toggleSwitchCoApp2 = document.getElementById('toggleSwitchCoApp2');
+  const addrCoApp2 = document.getElementById('addrCoApp2');
+  const phoneCoApp2 = document.getElementById('phoneCoApp2');
+  const emailCoApp2 = document.getElementById('emailCoApp2');
+  const footCoApp2 = document.getElementById('footCoApp2');
+
+
+  // --- Additional Elements ---
   const toggleSwitchAdditional = document.getElementById('toggleSwitchAdditional');
   const bankAdditional = document.getElementById('bankAdditional');
   const panAdditional = document.getElementById('panAdditional');
   const footAdditional = document.getElementById('footAdditional');
 
-  // View Containers and Tabs
+  // View Containers
+  const predictionsView = document.getElementById('predictionsView');
+  const duesView = document.getElementById('duesView'); 
+  const loanView = document.getElementById('loanView'); 
+  const coapplicantView = document.getElementById('coapplicantView'); // New Co-applicant View
   const guarantorView = document.getElementById('guarantorView');
   const additionalView = document.getElementById('additionalView');
-  const tabGuarantor = document.getElementById('tab-guarantor');
-  const tabAdditional = document.getElementById('tab-additional');
 
-  // Full, non-masked data storage for both views
+  // Map of all tab names to their element IDs for dynamic manipulation
+  const tabIDs = [
+      'predictions', 'dues', 'loan', 'communication', 'coapplicant', 
+      'guarantor', 'additional1', 'additional2', 'legal'
+  ];
+
+  // Full, non-masked data storage
+  const fullPredictions = {
+      time: timePredictions.innerText,
+      dateRange: dateRangePredictions.innerText,
+      day: dayPredictions.innerText,
+      loc1: loc1Predictions.innerText,
+      loc2: loc2Predictions.innerText,
+      summary: summaryPredictionsText.innerText
+  };
   const fullGuarantor = {
     addr: addrGuarantor.innerText,
     phone: phoneGuarantor.innerText,
     email: emailGuarantor.innerText
+  };
+  const fullCoApp1 = {
+    addr: addrCoApp1.innerText,
+    phone: phoneCoApp1.innerText,
+    email: emailCoApp1.innerText
+  };
+  const fullCoApp2 = {
+    addr: addrCoApp2.innerText,
+    phone: phoneCoApp2.innerText,
+    email: emailCoApp2.innerText
   };
   const fullAdditional = {
     bank: bankAdditional.innerText,
     pan: panAdditional.innerText
   };
 
-  // State variables
+  // State variables and timer constants
+  let timerPredictions = null;
   let timerGuarantor = null;
+  let timerCoApp1 = null; // Timer for Co-applicant 1
+  let timerCoApp2 = null; // Timer for Co-applicant 2
   let timerAdditional = null;
   const RE_MASK_DELAY = 10000; // 10 seconds
 
   // ===============================================
-  // 2. MASKING FUNCTIONS
+  // 2. MASKING FUNCTIONS (General & Specific)
   // ===============================================
 
   // General masking functions
@@ -407,20 +910,149 @@
     return l.slice(0,2) + '***@' + d.replace(/(.{1}).+(\..+)/, '$1***$2');
   };
   const maskAddr = a => {
+    // Keep the first number and comma, mask the rest with asterisks, keeping map icon
     const match = a.match(/^(\d+,\s*)(.*)/);
-    // Keep the first number and comma, mask the rest with asterisks
-    return match ? (match[1] + '****') : a; 
+    return match ? (match[1] + '****') : '****'; 
   };
   
   // Specific masking functions for Additional Details
   const maskBank = acc => acc.slice(0, 4) + '********' + acc.slice(-4);
   const maskPan = pan => pan.slice(0, 3) + '******' + pan.slice(-2);
 
+  // Specific masking functions for Predictions
+  const maskTime = t => '**** - ****';
+  const maskDate = d => {
+      // Assumes DD-MM-YYYY format
+      const parts = d.split('-');
+      if (parts.length === 3) {
+          return '**-**-****';
+      }
+      return '****';
+  };
+  const maskDateRange = dr => {
+      // Assumes DATE1 To DATE2 format
+      const [d1, , d2] = dr.split(' '); // split by space to get 24-09-2025 and 30-09-2025
+      return `${maskDate(d1)} To ${maskDate(d2)}`;
+  };
+  const maskLocation = l => '****'; // Mask location name
+  const maskSummary = s => s.replace(/(\*\*([^\*]+)\*\*)/g, '****'); // Mask all bolded words
+
+  // Function to wrap text with map icon SVG
+  const mapIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
+  const callIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.5-4.5A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>`;
+  const mailIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>`;
+
+  function wrapWithIcon(content, iconSvg, iconClass) {
+      return `${content} <div class="icon-circle ${iconClass} flex-shrink-0">${iconSvg}</div>`;
+  }
 
   // ===============================================
   // 3. MASKING/UNMASKING LOGIC (PER VIEW)
   // ===============================================
 
+  // --- Predictions Masking Logic (Simplified) ---
+  function applyMaskPredictions() {
+    if (timerPredictions) clearTimeout(timerPredictions);
+    timePredictions.innerText = maskTime(fullPredictions.time);
+    dateRangePredictions.innerText = maskDateRange(fullPredictions.dateRange);
+    dayPredictions.innerText = maskDate(fullPredictions.day);
+    loc1Predictions.innerHTML = fullPredictions.loc1.includes('Home') ? `${maskLocation(fullPredictions.loc1)} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 ml-1"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>` : '****';
+    loc2Predictions.innerHTML = fullPredictions.loc2.includes('Office') ? `${maskLocation(fullPredictions.loc2)} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 ml-1"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>` : '****';
+    summaryPredictionsText.innerText = maskSummary(fullPredictions.summary);
+    footPredictions.innerText = '';
+    toggleSwitchPredictions.checked = false;
+    toggleSwitchPredictions.setAttribute('aria-pressed', 'false');
+  }
+
+  function applyFullPredictions() {
+    timePredictions.innerText = fullPredictions.time;
+    dateRangePredictions.innerText = fullPredictions.dateRange;
+    dayPredictions.innerText = fullPredictions.day;
+    loc1Predictions.innerHTML = `${fullPredictions.loc1} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 ml-1"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
+    loc2Predictions.innerHTML = `${fullPredictions.loc2} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 ml-1"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
+    summaryPredictionsText.innerText = fullPredictions.summary;
+    footPredictions.innerText = `Sensitive data visible — will re-mask in ${RE_MASK_DELAY / 1000}s.`;
+    toggleSwitchPredictions.checked = true;
+    toggleSwitchPredictions.setAttribute('aria-pressed', 'true');
+    
+    if (timerPredictions) clearTimeout(timerPredictions);
+    timerPredictions = setTimeout(applyMaskPredictions, RE_MASK_DELAY);
+  }
+  
+  toggleSwitchPredictions.addEventListener('change', () => {
+    if (toggleSwitchPredictions.checked) { 
+      applyFullPredictions(); 
+    } else { 
+      applyMaskPredictions(); 
+    }
+  });
+
+
+  // --- Co-applicant 1 Masking Logic ---
+
+  function applyMaskCoApp1() {
+    if (timerCoApp1) clearTimeout(timerCoApp1);
+    addrCoApp1.innerHTML = fullCoApp1.addr.includes('602') ? maskAddr(fullCoApp1.addr) : '****';
+    phoneCoApp1.innerText = maskPhone(fullCoApp1.phone);
+    emailCoApp1.innerText = maskEmail(fullCoApp1.email);
+    footCoApp1.innerText = '';
+    toggleSwitchCoApp1.checked = false;
+    toggleSwitchCoApp1.setAttribute('aria-pressed', 'false');
+  }
+
+  function applyFullCoApp1() {
+    addrCoApp1.innerText = fullCoApp1.addr;
+    phoneCoApp1.innerText = fullCoApp1.phone;
+    emailCoApp1.innerText = fullCoApp1.email;
+    footCoApp1.innerText = `Sensitive data visible — will re-mask in ${RE_MASK_DELAY / 1000}s.`;
+    toggleSwitchCoApp1.checked = true;
+    toggleSwitchCoApp1.setAttribute('aria-pressed', 'true');
+    
+    if (timerCoApp1) clearTimeout(timerCoApp1);
+    timerCoApp1 = setTimeout(applyMaskCoApp1, RE_MASK_DELAY);
+  }
+  
+  toggleSwitchCoApp1.addEventListener('change', () => {
+    if (toggleSwitchCoApp1.checked) { 
+      applyFullCoApp1(); 
+    } else { 
+      applyMaskCoApp1(); 
+    }
+  });
+
+
+  // --- Co-applicant 2 Masking Logic ---
+
+  function applyMaskCoApp2() {
+    if (timerCoApp2) clearTimeout(timerCoApp2);
+    addrCoApp2.innerHTML = fullCoApp2.addr.includes('602') ? maskAddr(fullCoApp2.addr) : '****';
+    phoneCoApp2.innerText = maskPhone(fullCoApp2.phone);
+    emailCoApp2.innerText = maskEmail(fullCoApp2.email);
+    footCoApp2.innerText = '';
+    toggleSwitchCoApp2.checked = false;
+    toggleSwitchCoApp2.setAttribute('aria-pressed', 'false');
+  }
+
+  function applyFullCoApp2() {
+    addrCoApp2.innerText = fullCoApp2.addr;
+    phoneCoApp2.innerText = fullCoApp2.phone;
+    emailCoApp2.innerText = fullCoApp2.email;
+    footCoApp2.innerText = `Sensitive data visible — will re-mask in ${RE_MASK_DELAY / 1000}s.`;
+    toggleSwitchCoApp2.checked = true;
+    toggleSwitchCoApp2.setAttribute('aria-pressed', 'true');
+    
+    if (timerCoApp2) clearTimeout(timerCoApp2);
+    timerCoApp2 = setTimeout(applyMaskCoApp2, RE_MASK_DELAY);
+  }
+  
+  toggleSwitchCoApp2.addEventListener('change', () => {
+    if (toggleSwitchCoApp2.checked) { 
+      applyFullCoApp2(); 
+    } else { 
+      applyMaskCoApp2(); 
+    }
+  });
+  
   // --- Guarantor Masking Logic ---
 
   function applyMaskGuarantor() {
@@ -429,7 +1061,6 @@
     phoneGuarantor.innerText = maskPhone(fullGuarantor.phone);
     emailGuarantor.innerText = maskEmail(fullGuarantor.email);
     footGuarantor.innerText = '';
-    // Set toggle state to unchecked (masked)
     toggleSwitchGuarantor.checked = false;
     toggleSwitchGuarantor.setAttribute('aria-pressed', 'false');
   }
@@ -439,7 +1070,6 @@
     phoneGuarantor.innerText = fullGuarantor.phone;
     emailGuarantor.innerText = fullGuarantor.email;
     footGuarantor.innerText = `Sensitive data visible — will re-mask in ${RE_MASK_DELAY / 1000}s.`;
-    // Set toggle state to checked (unmasked)
     toggleSwitchGuarantor.checked = true;
     toggleSwitchGuarantor.setAttribute('aria-pressed', 'true');
     
@@ -447,12 +1077,10 @@
     timerGuarantor = setTimeout(applyMaskGuarantor, RE_MASK_DELAY);
   }
   
-  // Attach change listener to the new switch
   toggleSwitchGuarantor.addEventListener('change', () => {
     if (toggleSwitchGuarantor.checked) { 
       applyFullGuarantor(); 
     } else { 
-      // If manually turned off, mask immediately and clear timer
       applyMaskGuarantor(); 
     }
   });
@@ -465,7 +1093,6 @@
     bankAdditional.innerText = maskBank(fullAdditional.bank);
     panAdditional.innerText = maskPan(fullAdditional.pan);
     footAdditional.innerText = '';
-    // Set toggle state to unchecked (masked)
     toggleSwitchAdditional.checked = false;
     toggleSwitchAdditional.setAttribute('aria-pressed', 'false');
   }
@@ -474,7 +1101,6 @@
     bankAdditional.innerText = fullAdditional.bank;
     panAdditional.innerText = fullAdditional.pan;
     footAdditional.innerText = `Sensitive data visible — will re-mask in ${RE_MASK_DELAY / 1000}s.`;
-    // Set toggle state to checked (unmasked)
     toggleSwitchAdditional.checked = true;
     toggleSwitchAdditional.setAttribute('aria-pressed', 'true');
     
@@ -482,12 +1108,10 @@
     timerAdditional = setTimeout(applyMaskAdditional, RE_MASK_DELAY);
   }
   
-  // Attach change listener to the new switch
   toggleSwitchAdditional.addEventListener('change', () => {
     if (toggleSwitchAdditional.checked) { 
       applyFullAdditional(); 
     } else { 
-      // If manually turned off, mask immediately and clear timer
       applyMaskAdditional(); 
     }
   });
@@ -497,41 +1121,66 @@
   // 4. VIEW SWITCHING LOGIC
   // ===============================================
 
-  function switchView(viewName) {
-    // Hide all views and remove active class from all tabs
-    // The 'applicant' tab is just for demonstration as it's not implemented
-    const allTabs = [document.getElementById('tab-applicant'), tabGuarantor, tabAdditional];
-    [guarantorView, additionalView].forEach(view => view.classList.add('hidden'));
-    allTabs.forEach(tab => tab.classList.remove('tab-active'));
+  // Define which tab names map to which content view
+  const contentViewMap = {
+      'predictions': predictionsView, 
+      'dues': duesView, 
+      'loan': loanView, 
+      'coapplicant': coapplicantView,
+      'guarantor': guarantorView,
+      'additional1': additionalView, 
+  };
+  const allViews = [predictionsView, duesView, loanView, coapplicantView, guarantorView, additionalView];
 
-    // Show the selected view and set the active tab class
-    if (viewName === 'guarantor') {
-      guarantorView.classList.remove('hidden');
-      tabGuarantor.classList.add('tab-active');
-    } else if (viewName === 'additional') {
-      additionalView.classList.remove('hidden');
-      tabAdditional.classList.add('tab-active');
-    } else if (viewName === 'applicant') {
-      // If the applicant view was implemented, it would go here.
-      // For now, we just highlight the tab for completeness.
-      document.getElementById('tab-applicant').classList.add('tab-active');
+  function switchView(viewName) {
+    // 1. Hide all views and remove active class from all tabs
+    allViews.forEach(view => view.classList.add('hidden'));
+    tabIDs.forEach(id => {
+        const tab = document.getElementById(`tab-${id}`);
+        if (tab) tab.classList.remove('tab-active');
+    });
+
+    // 2. Determine which content view to show
+    let activeView = contentViewMap[viewName];
+
+    // Fallback: If the view name is not explicitly mapped, use Predictions.
+    if (!activeView) {
+        activeView = predictionsView; 
+    }
+
+    // 3. Show the determined view and set the active tab class
+    if (activeView) {
+        activeView.classList.remove('hidden');
     }
     
-    // Crucial: When switching away from a view, re-mask its sensitive data 
-    // and stop its timer to prevent accidental unmasking later.
-    if (viewName !== 'guarantor') applyMaskGuarantor();
-    if (viewName !== 'additional') applyMaskAdditional();
+    const activeTabElement = document.getElementById(`tab-${viewName}`);
+    if (activeTabElement) {
+        activeTabElement.classList.add('tab-active');
+    } 
+
+    // 4. Crucial: Re-masking logic
+    // Mask any data fields that are not in the currently active view/tab and clear timers.
+    if (activeView !== predictionsView) applyMaskPredictions();
+    if (activeView !== coapplicantView) {
+        applyMaskCoApp1();
+        applyMaskCoApp2();
+    }
+    if (activeView !== guarantorView) applyMaskGuarantor();
+    if (activeView !== additionalView) applyMaskAdditional();
   }
   
   // ===============================================
   // 5. INITIALIZATION
   // ===============================================
   
-  // INITIAL STATE: Apply masking to both views and start on the Guarantor tab
+  // INITIAL STATE: Apply masking to all views and start on the Predictions tab
+  applyMaskPredictions();
+  applyMaskCoApp1();
+  applyMaskCoApp2();
   applyMaskGuarantor();
   applyMaskAdditional();
-  // Ensure the correct view is shown (Guarantor by default)
-  switchView('guarantor'); 
+  // Ensure the correct view is shown (Predictions by default)
+  switchView('predictions'); 
 </script>
 </body>
 </html>
