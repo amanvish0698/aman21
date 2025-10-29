@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guarantor Details Mobile Screen</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Ensure the body acts as a viewport for the mobile container */
+    body {
+      background-color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    /* Simulate a mobile screen container */
+    .mobile-screen {
+      width: 100%;
+      max-width: 450px; /* Typical large phone screen width */
+      height: 100vh;
+      background-color: white;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      position: relative; /* For fixed footer */
+    }
+
+    /* Custom styles for the active tab indicator */
+    .tab-item {
+        transition: color 0.1s, border-color 0.1s;
+        cursor: pointer;
+    }
+    .tab-active {
+      border-color: rgb(37, 99, 235) !important; /* blue-600 */
+      color: rgb(37, 99, 235) !important; /* blue-600 */
+      font-weight: 600;
+    }
+
+    /* Fixed bottom bar */
+    .bottom-actions {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px; /* Space for the buttons */
+    }
+
+    /* Style the floating history button */
+    .history-button {
+      position: absolute;
+      right: 1.5rem;
+      bottom: 60px; /* Positioned above the fixed bottom bar */
+      transform: translateY(-50%);
+    }
+
+    /* Icon circle background */
+    .icon-circle {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+    }
+
+    /* Icon Colors based on screenshot */
+    .map-icon { background-color: #e5f1f9; color: #1e88e5; }
+    .call-icon { background-color: #e5f9e7; color: #43a047; }
+    .mail-icon { background-color: #f9e5e5; color: #e53935; }
+    .bank-icon { background-color: #f4ecf9; color: #8e44ad; }
+    
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <div class="mobile-screen">
+    <!-- Top Header (Kaustubh Chaudhry) -->
+    <header class="bg-white px-4 py-3 shadow-sm border-b border-gray-100">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <!-- Back Arrow -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 mr-3">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <div>
+            <h1 class="text-lg font-bold text-gray-800">Kaustubh Chaudhry</h1>
+            <p class="text-xs text-gray-500">PR00743690</p>
+          </div>
+        </div>
+        <!-- Call Icon (External Link) -->
+        <a href="tel:9078998878" class="text-blue-600 p-2 rounded-full hover:bg-gray-50 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.5-4.5A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white flex border-b border-gray-200 overflow-x-auto whitespace-nowrap" id="navTabs">
+      <div id="tab-applicant" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('applicant')">APPLICANT DETAILS</div>
+      <div id="tab-guarantor" class="flex-shrink-0 px-4 py-3 text-sm border-b-2 tab-active tab-item" onclick="switchView('guarantor')">GUARANTOR DETAILS</div>
+      <div id="tab-additional" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('additional')">ADDITIONAL DETAILS</div>
+    </nav>
+    
+    <!-- Main Content Area -->
+    <main class="flex-grow p-4 overflow-y-auto relative">
+
+        <!-- ============================================== -->
+        <!-- VIEW 1: GUARANTOR DETAILS (Default View) -->
+        <!-- ============================================== -->
+        <div id="guarantorView">
+            <h2 class="text-base font-semibold text-blue-600 mb-4 px-2 border-l-4 border-blue-600 pl-2">GUARANTOR 1</h2>
+            
+            <!-- Guarantor Card -->
+            <div class="bg-white p-5 rounded-xl shadow-lg space-y-5">
+                
+                <!-- Name & Toggle Button (Guarantor) -->
+                <div class="flex justify-between items-center">
+                    <p class="text-lg font-bold text-gray-800">Azeen</p>
+                    <button id="toggleEyeGuarantor" aria-pressed="false" aria-label="Toggle sensitive data" class="p-1 text-gray-500 hover:text-blue-600 transition">
+                        <svg id="eyeSvgGuarantor" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Default: Visibility Off -->
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.45 18.45 0 0 1-2.06 3.54M16 12a4 4 0 0 1-4 4m-4-4a4 4 0 0 1 4-4"/><line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Address -->
+                <div class="flex justify-between items-start pt-2 border-t border-gray-100">
+                    <p id="addrGuarantor" class="text-gray-700 font-medium pr-4">602, 6th Floor, Agrawal B6B Centre Building, Near Malad Industrial Estate</p>
+                    <div class="icon-circle map-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Phone -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="phoneGuarantor" class="text-gray-700 font-medium">9078998878</p>
+                    <div class="icon-circle call-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.5-4.5A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="emailGuarantor" class="text-gray-700 font-medium">sattu@gmail.com</p>
+                    <div class="icon-circle mail-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Relation (Non-sensitive) -->
+                <div class="pt-2 border-t border-gray-100">
+                    <p class="text-gray-700 font-medium">Sister</p>
+                </div>
+                
+                <!-- Re-masking notification -->
+                <small id="footGuarantor" class="text-xs text-red-600 mt-4 pt-2 border-t block font-medium" aria-live="polite"></small>
+                
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: ADDITIONAL DETAILS (Hidden by Default) -->
+        <!-- ============================================== -->
+        <div id="additionalView" class="hidden">
+            <h2 class="text-base font-semibold text-blue-600 mb-4 px-2 border-l-4 border-blue-600 pl-2">FINANCIAL DETAILS</h2>
+
+            <div class="bg-white p-5 rounded-xl shadow-lg space-y-5">
+                
+                <!-- Header & Toggle Button (Additional) -->
+                <div class="flex justify-between items-center">
+                    <p class="text-lg font-bold text-gray-800">Bank & Identity</p>
+                    <button id="toggleEyeAdditional" aria-pressed="false" aria-label="Toggle sensitive data" class="p-1 text-gray-500 hover:text-blue-600 transition">
+                        <svg id="eyeSvgAdditional" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Default: Visibility Off -->
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.45 18.45 0 0 1-2.06 3.54M16 12a4 4 0 0 1-4 4m-4-4a4 4 0 0 1 4-4"/><line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Bank Account -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="bankAdditional" class="text-gray-700 font-medium">9876543210123456</p>
+                    <div class="icon-circle bank-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+                            <line x1="2" y1="10" x2="22" y2="10"></line>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- PAN/SSN (Identity) -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="panAdditional" class="text-gray-700 font-medium">ABCDE1234Z</p>
+                    <div class="icon-circle mail-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- KYC Status (Non-sensitive) -->
+                <div class="pt-2 border-t border-gray-100">
+                    <p class="text-gray-700 font-medium text-green-600">KYC Verified: Yes</p>
+                </div>
+                
+                <!-- Re-masking notification -->
+                <small id="footAdditional" class="text-xs text-red-600 mt-4 pt-2 border-t block font-medium" aria-live="polite"></small>
+                
+            </div>
+        </div>
+        
+        <!-- Floating History Button -->
+        <button class="history-button flex items-center bg-yellow-500 text-white font-bold py-3 px-4 rounded-full shadow-lg hover:bg-yellow-600 transition duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                <path d="M12 2v10l4 4m6-6a10 10 0 1 1-2.73-7.5l-2.22 2.22"></path>
+                <path d="M14 2v6h6"></path>
+            </svg>
+            History
+        </button>
+
+    </main>
+
+    <!-- Fixed Bottom Actions -->
+    <div class="bottom-actions flex border-t border-gray-200">
+        <button class="flex-1 bg-indigo-700 text-white text-lg font-semibold py-4 hover:bg-indigo-800 transition duration-150">
+            COLLECT PAYMENT
+        </button>
+        <button class="flex-1 bg-white text-indigo-700 text-lg font-semibold py-4 hover:bg-gray-50 transition duration-150 border-l border-gray-200">
+            FOLLOW UP
+        </button>
+    </div>
+
+  </div>
+
+<script>
+  // ===============================================
+  // 1. DATA AND ELEMENT MAPPING
+  // ===============================================
+
+  // Guarantor Elements
+  const toggleGuarantor = document.getElementById('toggleEyeGuarantor');
+  const eyeSvgGuarantor = document.getElementById('eyeSvgGuarantor');
+  const addrGuarantor = document.getElementById('addrGuarantor');
+  const phoneGuarantor = document.getElementById('phoneGuarantor');
+  const emailGuarantor = document.getElementById('emailGuarantor');
+  const footGuarantor = document.getElementById('footGuarantor');
+
+  // Additional Elements
+  const toggleAdditional = document.getElementById('toggleEyeAdditional');
+  const eyeSvgAdditional = document.getElementById('eyeSvgAdditional');
+  const bankAdditional = document.getElementById('bankAdditional');
+  const panAdditional = document.getElementById('panAdditional');
+  const footAdditional = document.getElementById('footAdditional');
+
+  // View Containers and Tabs
+  const guarantorView = document.getElementById('guarantorView');
+  const additionalView = document.getElementById('additionalView');
+  const tabGuarantor = document.getElementById('tab-guarantor');
+  const tabAdditional = document.getElementById('tab-additional');
+  // const tabApplicant = document.getElementById('tab-applicant'); // Not implemented in this example
+
+  // Full, non-masked data storage for both views
+  const fullGuarantor = {
+    addr: addrGuarantor.innerText,
+    phone: phoneGuarantor.innerText,
+    email: emailGuarantor.innerText
+  };
+  const fullAdditional = {
+    bank: bankAdditional.innerText,
+    pan: panAdditional.innerText
+  };
+
+  // State variables
+  let visibleGuarantor = false;
+  let timerGuarantor = null;
+  let visibleAdditional = false;
+  let timerAdditional = null;
+  const RE_MASK_DELAY = 10000; // 10 seconds
+
+  // ===============================================
+  // 2. MASKING FUNCTIONS
+  // ===============================================
+
+  // General masking functions
+  const maskPhone = p => p.replace(/(\d{4})\d+(\d{3})/, '$1****$2');
+  const maskEmail = e => {
+    const [l, d] = e.split('@'); 
+    return l.slice(0,2) + '***@' + d.replace(/(.{1}).+(\..+)/, '$1***$2');
+  };
+  const maskAddr = a => {
+    const match = a.match(/^(\d+,\s*)(.*)/);
+    return match ? (match[1] + '****') : a;
+  };
+  
+  // Specific masking functions for Additional Details
+  const maskBank = acc => acc.slice(0, 4) + '********' + acc.slice(-4);
+  const maskPan = pan => pan.slice(0, 3) + '******' + pan.slice(-2);
+
+
+  // ===============================================
+  // 3. MASKING/UNMASKING LOGIC (PER VIEW)
+  // ===============================================
+
+  // --- Guarantor Masking Logic ---
+
+  function updateEyeIconGuarantor(isVisible) {
+    const svgContent = isVisible 
+      ? '<path d="M2 12s5 7 10 7 10-7 10-7-5-7-10-7-10 7-10 7Z"/><circle cx="12" cy="12" r="3"/>'
+      : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.45 18.45 0 0 1-2.06 3.54M16 12a4 4 0 0 1-4 4m-4-4a4 4 0 0 1 4-4"/><line x1="1" y1="1" x2="23" y2="23"/>';
+    eyeSvgGuarantor.innerHTML = svgContent;
+    toggleGuarantor.classList.toggle('text-blue-600', isVisible);
+    toggleGuarantor.classList.toggle('text-gray-500', !isVisible);
+  }
+
+  function applyMaskGuarantor() {
+    if (timerGuarantor) clearTimeout(timerGuarantor);
+    addrGuarantor.innerText = maskAddr(fullGuarantor.addr);
+    phoneGuarantor.innerText = maskPhone(fullGuarantor.phone);
+    emailGuarantor.innerText = maskEmail(fullGuarantor.email);
+    footGuarantor.innerText = '';
+    toggleGuarantor.setAttribute('aria-pressed', 'false');
+    updateEyeIconGuarantor(false);
+    visibleGuarantor = false;
+  }
+
+  function applyFullGuarantor() {
+    addrGuarantor.innerText = fullGuarantor.addr;
+    phoneGuarantor.innerText = fullGuarantor.phone;
+    emailGuarantor.innerText = fullGuarantor.email;
+    footGuarantor.innerText = `Sensitive data visible — will re-mask in ${RE_MASK_DELAY / 1000}s.`;
+    toggleGuarantor.setAttribute('aria-pressed', 'true');
+    updateEyeIconGuarantor(true);
+    
+    if (timerGuarantor) clearTimeout(timerGuarantor);
+    timerGuarantor = setTimeout(applyMaskGuarantor, RE_MASK_DELAY);
+    visibleGuarantor = true;
+  }
+  
+  toggleGuarantor.addEventListener('click', () => {
+    if (visibleGuarantor) { applyMaskGuarantor(); } else { applyFullGuarantor(); }
+  });
+
+
+  // --- Additional Masking Logic ---
+
+  function updateEyeIconAdditional(isVisible) {
+    const svgContent = isVisible 
+      ? '<path d="M2 12s5 7 10 7 10-7 10-7-5-7-10-7-10 7-10 7Z"/><circle cx="12" cy="12" r="3"/>'
+      : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.45 18.45 0 0 1-2.06 3.54M16 12a4 4 0 0 1-4 4m-4-4a4 4 0 0 1 4-4"/><line x1="1" y1="1" x2="23" y2="23"/>';
+    eyeSvgAdditional.innerHTML = svgContent;
+    toggleAdditional.classList.toggle('text-blue-600', isVisible);
+    toggleAdditional.classList.toggle('text-gray-500', !isVisible);
+  }
+
+  function applyMaskAdditional() {
+    if (timerAdditional) clearTimeout(timerAdditional);
+    bankAdditional.innerText = maskBank(fullAdditional.bank);
+    panAdditional.innerText = maskPan(fullAdditional.pan);
+    footAdditional.innerText = '';
+    toggleAdditional.setAttribute('aria-pressed', 'false');
+    updateEyeIconAdditional(false);
+    visibleAdditional = false;
+  }
+
+  function applyFullAdditional() {
+    bankAdditional.innerText = fullAdditional.bank;
+    panAdditional.innerText = fullAdditional.pan;
+    footAdditional.innerText = `Sensitive data visible — will re-mask in ${RE_MASK_DELAY / 1000}s.`;
+    toggleAdditional.setAttribute('aria-pressed', 'true');
+    updateEyeIconAdditional(true);
+    
+    if (timerAdditional) clearTimeout(timerAdditional);
+    timerAdditional = setTimeout(applyMaskAdditional, RE_MASK_DELAY);
+    visibleAdditional = true;
+  }
+  
+  toggleAdditional.addEventListener('click', () => {
+    if (visibleAdditional) { applyMaskAdditional(); } else { applyFullAdditional(); }
+  });
+
+
+  // ===============================================
+  // 4. VIEW SWITCHING LOGIC
+  // ===============================================
+
+  function switchView(viewName) {
+    // Hide all views and remove active class from all tabs
+    [guarantorView, additionalView].forEach(view => view.classList.add('hidden'));
+    [tabGuarantor, tabAdditional].forEach(tab => tab.classList.remove('tab-active'));
+
+    // Show the selected view and set the active tab class
+    if (viewName === 'guarantor') {
+      guarantorView.classList.remove('hidden');
+      tabGuarantor.classList.add('tab-active');
+    } else if (viewName === 'additional') {
+      additionalView.classList.remove('hidden');
+      tabAdditional.classList.add('tab-active');
+    }
+    // You would add more 'else if' blocks here for other tabs like 'applicant'
+    
+    // Crucial: When switching away from a view, re-mask its sensitive data 
+    // and stop its timer to prevent accidental unmasking later.
+    if (viewName !== 'guarantor') applyMaskGuarantor();
+    if (viewName !== 'additional') applyMaskAdditional();
+  }
+  
+  // ===============================================
+  // 5. INITIALIZATION
+  // ===============================================
+  
+  // INITIAL STATE: Apply masking to both views and start on the Guarantor tab
+  applyMaskGuarantor();
+  applyMaskAdditional();
+  // Ensure the correct view is shown (Guarantor by default)
+  switchView('guarantor'); 
+</script>
+</body>
+</html>
