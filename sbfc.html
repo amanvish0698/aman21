@@ -9,25 +9,27 @@
     /* Ensure the body acts as a viewport for the mobile container */
     body {
       background-color: #f3f4f6;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'sans-serif';
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
+      /* Ensures no scrollbar appears on the entire body */
+      overflow: hidden; 
     }
 
     /* Simulate a mobile screen container */
     .mobile-screen {
       width: 100%;
-      max-width: 450px; /* Typical large phone screen width */
-      height: 100vh;
+      max-width: 450px; 
+      /* Use h-screen utility class for full height, handled below */
       background-color: white;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
-      position: relative; /* For fixed footer */
+      position: relative; /* For fixed footer/history button */
     }
 
     /* Custom styles for the active tab indicator */
@@ -39,6 +41,15 @@
       border-color: rgb(37, 99, 235) !important; /* blue-600 */
       color: rgb(37, 99, 235) !important; /* blue-600 */
       font-weight: 600;
+    }
+
+    /* CSS to hide scrollbar on the navigation tabs while keeping overflow-x-auto functionality */
+    #navTabs {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;     /* Firefox */
+    }
+    #navTabs::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
     }
 
     /* Fixed bottom bar */
@@ -54,8 +65,8 @@
     .history-button {
       position: absolute;
       right: 1.5rem;
-      bottom: 60px; /* Positioned above the fixed bottom bar */
-      transform: translateY(-50%);
+      bottom: 100px; /* Positioned above the fixed bottom bar */
+      z-index: 10;
     }
 
     /* Icon circle background */
@@ -74,6 +85,24 @@
     .mail-icon { background-color: #f9e5e5; color: #e53935; }
     .bank-icon { background-color: #f4ecf9; color: #8e44ad; }
     
+    /* Custom style for the toggle slider with text */
+    .toggle-slider-text {
+      /* Styles for the handle/circle */
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      background-color: white;
+      border-radius: 9999px;
+      height: 20px;
+      width: 44px; /* Wider handle for better visual */
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .peer:checked + div > .toggle-slider-text {
+      /* Move the handle from the left side (MASKED) to the right side (UNMASKED) */
+      /* Calculation: 96px (w-24) - 4px (total horizontal padding) - 44px (handle width) = 48px travel */
+      transform: translateX(48px); 
+    }
   </style>
   <script>
     tailwind.config = {
@@ -89,9 +118,9 @@
 </head>
 <body>
 
-  <div class="mobile-screen">
+  <div class="mobile-screen h-screen">
     <!-- Top Header (Kaustubh Chaudhry) -->
-    <header class="bg-white px-4 py-3 shadow-sm border-b border-gray-100">
+    <header class="bg-white px-4 py-3 shadow-sm border-b border-gray-100 flex-shrink-0">
       <div class="flex justify-between items-center">
         <div class="flex items-center">
           <!-- Back Arrow -->
@@ -113,15 +142,15 @@
       </div>
     </header>
 
-    <!-- Navigation Tabs -->
-    <nav class="bg-white flex border-b border-gray-200 overflow-x-auto whitespace-nowrap" id="navTabs">
+    <!-- Navigation Tabs (Scrollbar Hidden via CSS in <style> block) -->
+    <nav class="bg-white flex border-b border-gray-200 overflow-x-auto whitespace-nowrap flex-shrink-0" id="navTabs">
       <div id="tab-applicant" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('applicant')">APPLICANT DETAILS</div>
       <div id="tab-guarantor" class="flex-shrink-0 px-4 py-3 text-sm border-b-2 tab-active tab-item" onclick="switchView('guarantor')">GUARANTOR DETAILS</div>
       <div id="tab-additional" class="flex-shrink-0 px-4 py-3 text-sm text-gray-500 border-b-2 border-transparent tab-item" onclick="switchView('additional')">ADDITIONAL DETAILS</div>
     </nav>
     
-    <!-- Main Content Area -->
-    <main class="flex-grow p-4 overflow-y-auto relative">
+    <!-- Main Content Area - Scrollable Area -->
+    <main class="flex-grow p-4 overflow-y-auto relative pb-20"> <!-- Added pb-20 to clear bottom bar and history button -->
 
         <!-- ============================================== -->
         <!-- VIEW 1: GUARANTOR DETAILS (Default View) -->
@@ -135,12 +164,20 @@
                 <!-- Name & Toggle Button (Guarantor) -->
                 <div class="flex justify-between items-center">
                     <p class="text-lg font-bold text-gray-800">Azeen</p>
-                    <button id="toggleEyeGuarantor" aria-pressed="false" aria-label="Toggle sensitive data" class="p-1 text-gray-500 hover:text-blue-600 transition">
-                        <svg id="eyeSvgGuarantor" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <!-- Default: Visibility Off -->
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.45 18.45 0 0 1-2.06 3.54M16 12a4 4 0 0 1-4 4m-4-4a4 4 0 0 1 4-4"/><line x1="1" y1="1" x2="23" y2="23"/>
-                        </svg>
-                    </button>
+                    <!-- START: TOGGLE SWITCH WITH TEXT (Guarantor) -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleSwitchGuarantor" aria-label="Toggle sensitive data" class="sr-only peer">
+                        <!-- Track Container: w-24, h-6, with text elements and slider handle -->
+                        <div class="w-24 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:bg-indigo-700 relative flex items-center justify-between px-1 transition duration-200">
+                            <!-- Text for MASKED (Left - Adjusted to left-4 for better alignment) -->
+                            <span class="absolute left-4 text-xs font-bold text-gray-700 peer-checked:opacity-0 opacity-100 transition-opacity duration-200 z-10 pointer-events-none">MASKED</span>
+                            <!-- Text for UNMASKED (Right - Adjusted to right-4 for better alignment) -->
+                            <span class="absolute right-4 text-xs font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200 z-10 pointer-events-none">UNMASKED</span>
+                            <!-- Toggle Handle: w-11, h-5 (uses custom CSS for position/movement) -->
+                            <div class="toggle-slider-text"></div>
+                        </div>
+                    </label>
+                    <!-- END: TOGGLE SWITCH WITH TEXT -->
                 </div>
                 
                 <!-- Address -->
@@ -197,12 +234,20 @@
                 <!-- Header & Toggle Button (Additional) -->
                 <div class="flex justify-between items-center">
                     <p class="text-lg font-bold text-gray-800">Bank & Identity</p>
-                    <button id="toggleEyeAdditional" aria-pressed="false" aria-label="Toggle sensitive data" class="p-1 text-gray-500 hover:text-blue-600 transition">
-                        <svg id="eyeSvgAdditional" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <!-- Default: Visibility Off -->
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.45 18.45 0 0 1-2.06 3.54M16 12a4 4 0 0 1-4 4m-4-4a4 4 0 0 1 4-4"/><line x1="1" y1="1" x2="23" y2="23"/>
-                        </svg>
-                    </button>
+                    <!-- START: TOGGLE SWITCH WITH TEXT (Additional) -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleSwitchAdditional" aria-label="Toggle sensitive data" class="sr-only peer">
+                        <!-- Track Container: w-24, h-6, with text elements and slider handle -->
+                        <div class="w-24 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:bg-indigo-700 relative flex items-center justify-between px-1 transition duration-200">
+                            <!-- Text for MASKED (Left - Adjusted to left-4 for better alignment) -->
+                            <span class="absolute left-4 text-xs font-bold text-gray-700 peer-checked:opacity-0 opacity-100 transition-opacity duration-200 z-10 pointer-events-none">MASKED</span>
+                            <!-- Text for UNMASKED (Right - Adjusted to right-4 for better alignment) -->
+                            <span class="absolute right-4 text-xs font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200 z-10 pointer-events-none">UNMASKED</span>
+                            <!-- Toggle Handle: w-11, h-5 (uses custom CSS for position/movement) -->
+                            <div class="toggle-slider-text"></div>
+                        </div>
+                    </label>
+                    <!-- END: TOGGLE SWITCH WITH TEXT -->
                 </div>
 
                 <!-- Bank Account -->
@@ -266,17 +311,15 @@
   // 1. DATA AND ELEMENT MAPPING
   // ===============================================
 
-  // Guarantor Elements
-  const toggleGuarantor = document.getElementById('toggleEyeGuarantor');
-  const eyeSvgGuarantor = document.getElementById('eyeSvgGuarantor');
+  // Guarantor Elements (Updated to reference the new input)
+  const toggleSwitchGuarantor = document.getElementById('toggleSwitchGuarantor');
   const addrGuarantor = document.getElementById('addrGuarantor');
   const phoneGuarantor = document.getElementById('phoneGuarantor');
   const emailGuarantor = document.getElementById('emailGuarantor');
   const footGuarantor = document.getElementById('footGuarantor');
 
-  // Additional Elements
-  const toggleAdditional = document.getElementById('toggleEyeAdditional');
-  const eyeSvgAdditional = document.getElementById('eyeSvgAdditional');
+  // Additional Elements (Updated to reference the new input)
+  const toggleSwitchAdditional = document.getElementById('toggleSwitchAdditional');
   const bankAdditional = document.getElementById('bankAdditional');
   const panAdditional = document.getElementById('panAdditional');
   const footAdditional = document.getElementById('footAdditional');
@@ -286,7 +329,6 @@
   const additionalView = document.getElementById('additionalView');
   const tabGuarantor = document.getElementById('tab-guarantor');
   const tabAdditional = document.getElementById('tab-additional');
-  // const tabApplicant = document.getElementById('tab-applicant'); // Not implemented in this example
 
   // Full, non-masked data storage for both views
   const fullGuarantor = {
@@ -300,9 +342,7 @@
   };
 
   // State variables
-  let visibleGuarantor = false;
   let timerGuarantor = null;
-  let visibleAdditional = false;
   let timerAdditional = null;
   const RE_MASK_DELAY = 10000; // 10 seconds
 
@@ -318,7 +358,8 @@
   };
   const maskAddr = a => {
     const match = a.match(/^(\d+,\s*)(.*)/);
-    return match ? (match[1] + '****') : a;
+    // Keep the first number and comma, mask the rest with asterisks
+    return match ? (match[1] + '****') : a; 
   };
   
   // Specific masking functions for Additional Details
@@ -332,24 +373,15 @@
 
   // --- Guarantor Masking Logic ---
 
-  function updateEyeIconGuarantor(isVisible) {
-    const svgContent = isVisible 
-      ? '<path d="M2 12s5 7 10 7 10-7 10-7-5-7-10-7-10 7-10 7Z"/><circle cx="12" cy="12" r="3"/>'
-      : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.45 18.45 0 0 1-2.06 3.54M16 12a4 4 0 0 1-4 4m-4-4a4 4 0 0 1 4-4"/><line x1="1" y1="1" x2="23" y2="23"/>';
-    eyeSvgGuarantor.innerHTML = svgContent;
-    toggleGuarantor.classList.toggle('text-blue-600', isVisible);
-    toggleGuarantor.classList.toggle('text-gray-500', !isVisible);
-  }
-
   function applyMaskGuarantor() {
     if (timerGuarantor) clearTimeout(timerGuarantor);
     addrGuarantor.innerText = maskAddr(fullGuarantor.addr);
     phoneGuarantor.innerText = maskPhone(fullGuarantor.phone);
     emailGuarantor.innerText = maskEmail(fullGuarantor.email);
     footGuarantor.innerText = '';
-    toggleGuarantor.setAttribute('aria-pressed', 'false');
-    updateEyeIconGuarantor(false);
-    visibleGuarantor = false;
+    // Set toggle state to unchecked (masked)
+    toggleSwitchGuarantor.checked = false;
+    toggleSwitchGuarantor.setAttribute('aria-pressed', 'false');
   }
 
   function applyFullGuarantor() {
@@ -357,54 +389,55 @@
     phoneGuarantor.innerText = fullGuarantor.phone;
     emailGuarantor.innerText = fullGuarantor.email;
     footGuarantor.innerText = `Sensitive data visible — will re-mask in ${RE_MASK_DELAY / 1000}s.`;
-    toggleGuarantor.setAttribute('aria-pressed', 'true');
-    updateEyeIconGuarantor(true);
+    // Set toggle state to checked (unmasked)
+    toggleSwitchGuarantor.checked = true;
+    toggleSwitchGuarantor.setAttribute('aria-pressed', 'true');
     
     if (timerGuarantor) clearTimeout(timerGuarantor);
     timerGuarantor = setTimeout(applyMaskGuarantor, RE_MASK_DELAY);
-    visibleGuarantor = true;
   }
   
-  toggleGuarantor.addEventListener('click', () => {
-    if (visibleGuarantor) { applyMaskGuarantor(); } else { applyFullGuarantor(); }
+  // Attach change listener to the new switch
+  toggleSwitchGuarantor.addEventListener('change', () => {
+    if (toggleSwitchGuarantor.checked) { 
+      applyFullGuarantor(); 
+    } else { 
+      applyMaskGuarantor(); 
+    }
   });
 
 
   // --- Additional Masking Logic ---
-
-  function updateEyeIconAdditional(isVisible) {
-    const svgContent = isVisible 
-      ? '<path d="M2 12s5 7 10 7 10-7 10-7-5-7-10-7-10 7-10 7Z"/><circle cx="12" cy="12" r="3"/>'
-      : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.45 18.45 0 0 1-2.06 3.54M16 12a4 4 0 0 1-4 4m-4-4a4 4 0 0 1 4-4"/><line x1="1" y1="1" x2="23" y2="23"/>';
-    eyeSvgAdditional.innerHTML = svgContent;
-    toggleAdditional.classList.toggle('text-blue-600', isVisible);
-    toggleAdditional.classList.toggle('text-gray-500', !isVisible);
-  }
 
   function applyMaskAdditional() {
     if (timerAdditional) clearTimeout(timerAdditional);
     bankAdditional.innerText = maskBank(fullAdditional.bank);
     panAdditional.innerText = maskPan(fullAdditional.pan);
     footAdditional.innerText = '';
-    toggleAdditional.setAttribute('aria-pressed', 'false');
-    updateEyeIconAdditional(false);
-    visibleAdditional = false;
+    // Set toggle state to unchecked (masked)
+    toggleSwitchAdditional.checked = false;
+    toggleSwitchAdditional.setAttribute('aria-pressed', 'false');
   }
 
   function applyFullAdditional() {
     bankAdditional.innerText = fullAdditional.bank;
     panAdditional.innerText = fullAdditional.pan;
     footAdditional.innerText = `Sensitive data visible — will re-mask in ${RE_MASK_DELAY / 1000}s.`;
-    toggleAdditional.setAttribute('aria-pressed', 'true');
-    updateEyeIconAdditional(true);
+    // Set toggle state to checked (unmasked)
+    toggleSwitchAdditional.checked = true;
+    toggleSwitchAdditional.setAttribute('aria-pressed', 'true');
     
     if (timerAdditional) clearTimeout(timerAdditional);
     timerAdditional = setTimeout(applyMaskAdditional, RE_MASK_DELAY);
-    visibleAdditional = true;
   }
   
-  toggleAdditional.addEventListener('click', () => {
-    if (visibleAdditional) { applyMaskAdditional(); } else { applyFullAdditional(); }
+  // Attach change listener to the new switch
+  toggleSwitchAdditional.addEventListener('change', () => {
+    if (toggleSwitchAdditional.checked) { 
+      applyFullAdditional(); 
+    } else { 
+      applyMaskAdditional(); 
+    }
   });
 
 
@@ -414,8 +447,10 @@
 
   function switchView(viewName) {
     // Hide all views and remove active class from all tabs
+    // The 'applicant' tab is just for demonstration as it's not implemented
+    const allTabs = [document.getElementById('tab-applicant'), tabGuarantor, tabAdditional];
     [guarantorView, additionalView].forEach(view => view.classList.add('hidden'));
-    [tabGuarantor, tabAdditional].forEach(tab => tab.classList.remove('tab-active'));
+    allTabs.forEach(tab => tab.classList.remove('tab-active'));
 
     // Show the selected view and set the active tab class
     if (viewName === 'guarantor') {
@@ -424,8 +459,11 @@
     } else if (viewName === 'additional') {
       additionalView.classList.remove('hidden');
       tabAdditional.classList.add('tab-active');
+    } else if (viewName === 'applicant') {
+      // If the applicant view was implemented, it would go here.
+      // For now, we just highlight the tab for completeness.
+      document.getElementById('tab-applicant').classList.add('tab-active');
     }
-    // You would add more 'else if' blocks here for other tabs like 'applicant'
     
     // Crucial: When switching away from a view, re-mask its sensitive data 
     // and stop its timer to prevent accidental unmasking later.
