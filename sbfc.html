@@ -30,6 +30,7 @@
       display: flex;
       flex-direction: column;
       position: relative; /* For fixed footer/history button */
+      height: 100vh; /* Explicitly set height for better mobile behavior */
     }
 
     /* Custom styles for the active tab indicator */
@@ -52,20 +53,19 @@
         display: none; /* Chrome, Safari, Opera */
     }
 
-    /* Fixed bottom bar */
+    /* Fixed bottom bar - Now using flex-shrink: 0 to pin it to the bottom of the flex column */
     .bottom-actions {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 80px; /* Space for the buttons */
+        /* Removed position: absolute/fixed properties */
+        flex-shrink: 0; 
+        width: 100%;
+        /* The height is defined by the content (py-4) */
     }
 
     /* Style the floating history button */
     .history-button {
       position: absolute;
       right: 1.5rem;
-      bottom: 100px; /* Positioned above the fixed bottom bar */
+      bottom: 100px; /* Positioned 100px from the bottom edge of the .mobile-screen */
       z-index: 10;
     }
 
@@ -150,7 +150,7 @@
     </nav>
     
     <!-- Main Content Area - Scrollable Area -->
-    <main class="flex-grow p-4 overflow-y-auto relative pb-20"> <!-- Added pb-20 to clear bottom bar and history button -->
+    <main class="flex-grow p-4 overflow-y-auto relative pb-20"> <!-- Added pb-20 to clear history button and the bottom bar -->
 
         <!-- ============================================== -->
         <!-- VIEW 1: GUARANTOR DETAILS (Default View) -->
@@ -294,7 +294,7 @@
 
     </main>
 
-    <!-- Fixed Bottom Actions -->
+    <!-- Fixed Bottom Actions - Now guaranteed to be visible at the bottom of the flex container -->
     <div class="bottom-actions flex border-t border-gray-200">
         <button class="flex-1 bg-indigo-700 text-white text-lg font-semibold py-4 hover:bg-indigo-800 transition duration-150">
             COLLECT PAYMENT
