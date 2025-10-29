@@ -20,7 +20,7 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      height: 100%; /* Changed from min-height: 100vh */
+      height: 100%; 
       /* Ensures no scrollbar appears on the entire body */
       overflow: hidden; 
     }
@@ -68,7 +68,7 @@
     .history-button {
       position: absolute;
       right: 1.5rem;
-      /* EDITED: Changed from 100px to 1.5rem (24px) to align closer to the bottom action bar */
+      /* Adjusted to align closer to the bottom action bar */
       bottom: 1.5rem; 
       z-index: 10;
     }
@@ -89,23 +89,55 @@
     .mail-icon { background-color: #f9e5e5; color: #e53935; }
     .bank-icon { background-color: #f4ecf9; color: #8e44ad; }
     
-    /* Custom style for the toggle slider with text */
-    .toggle-slider-text {
-      /* Styles for the handle/circle */
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      background-color: white;
-      border-radius: 9999px;
-      height: 20px;
-      width: 44px; /* Wider handle for better visual */
-      transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* === Custom Toggle Styles (Icon-based) === */
+    .toggle-track {
+        position: relative;
+        width: 60px; /* Reduced width */
+        height: 32px; /* Increased height for better visibility */
+        border-radius: 9999px;
+        transition: background-color 0.2s;
+        display: flex;
+        align-items: center;
+        padding: 4px;
+        background-color: #d1d5db; /* gray-300 (Masked/Off) */
     }
-    .peer:checked + div > .toggle-slider-text {
-      /* Move the handle from the left side (MASKED) to the right side (UNMASKED) */
-      /* Calculation: 96px (w-24) - 4px (total horizontal padding) - 44px (handle width) = 48px travel */
-      transform: translateX(48px); 
+    .peer:checked + .toggle-track {
+        background-color: #4f46e5; /* indigo-600 (Unmasked/On) */
+    }
+
+    .toggle-handle {
+        height: 24px;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        background-color: white;
+        transition: transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    .peer:checked + .toggle-track > .toggle-handle {
+        /* Move the handle to the right side */
+        /* Total track width (60px) - padding (8px total) - handle width (24px) = 28px travel */
+        transform: translateX(28px); 
+    }
+
+    /* Icon colors/states */
+    .icon-masked { 
+        color: #4b5563; /* gray-600 */
+        opacity: 1;
+        transition: opacity 0.2s;
+    }
+    .peer:checked + .toggle-track > .toggle-handle > .icon-masked {
+        opacity: 0;
+    }
+    .icon-unmasked {
+        color: #4f46e5; /* indigo-600 */
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .peer:checked + .toggle-track > .toggle-handle > .icon-unmasked {
+        opacity: 1;
     }
   </style>
   <script>
@@ -122,7 +154,6 @@
 </head>
 <body>
 
-  <!-- Note: Removed h-screen from this div as height: 100% is set in CSS -->
   <div class="mobile-screen"> 
     <!-- Top Header (Kaustubh Chaudhry) -->
     <header class="bg-white px-4 py-3 shadow-sm border-b border-gray-100 flex-shrink-0">
@@ -155,7 +186,6 @@
     </nav>
     
     <!-- Main Content Area - Scrollable Area -->
-    <!-- The pb-20 (80px) ensures the scrollable content clears the 48px high bottom bar + 40px history button offset -->
     <main class="flex-grow p-4 overflow-y-auto relative pb-20"> 
 
         <!-- ============================================== -->
@@ -170,20 +200,27 @@
                 <!-- Name & Toggle Button (Guarantor) -->
                 <div class="flex justify-between items-center">
                     <p class="text-lg font-bold text-gray-800">Azeen</p>
-                    <!-- START: TOGGLE SWITCH WITH TEXT (Guarantor) -->
+                    <!-- START: ICON-BASED TOGGLE SWITCH (Guarantor) -->
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggleSwitchGuarantor" aria-label="Toggle sensitive data" class="sr-only peer">
-                        <!-- Track Container: w-24, h-6, with text elements and slider handle -->
-                        <div class="w-24 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:bg-indigo-700 relative flex items-center justify-between px-1 transition duration-200">
-                            <!-- Text for MASKED (Left - Adjusted to left-4 for better alignment) -->
-                            <span class="absolute left-4 text-xs font-bold text-gray-700 peer-checked:opacity-0 opacity-100 transition-opacity duration-200 z-10 pointer-events-none">MASKED</span>
-                            <!-- Text for UNMASKED (Right - Adjusted to right-4 for better alignment) -->
-                            <span class="absolute right-4 text-xs font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200 z-10 pointer-events-none">UNMASKED</span>
-                            <!-- Toggle Handle: w-11, h-5 (uses custom CSS for position/movement) -->
-                            <div class="toggle-slider-text"></div>
+                        <input type="checkbox" id="toggleSwitchGuarantor" aria-label="Toggle sensitive data visibility" class="sr-only peer">
+                        <div class="toggle-track">
+                            <div class="toggle-handle">
+                                <!-- Closed Eye (Masked/Default) -->
+                                <svg class="icon-masked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                    <path d="M6.61 6.61A13.16 13.16 0 0 0 2 12s3 7 10 7a9.76 9.76 0 0 0 5.44-1.6"></path>
+                                    <line x1="2" y1="2" x2="22" y2="22"></line>
+                                </svg>
+                                <!-- Open Eye (Unmasked) -->
+                                <svg class="icon-unmasked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </div>
                         </div>
                     </label>
-                    <!-- END: TOGGLE SWITCH WITH TEXT -->
+                    <!-- END: ICON-BASED TOGGLE SWITCH -->
                 </div>
                 
                 <!-- Address -->
@@ -240,20 +277,27 @@
                 <!-- Header & Toggle Button (Additional) -->
                 <div class="flex justify-between items-center">
                     <p class="text-lg font-bold text-gray-800">Bank & Identity</p>
-                    <!-- START: TOGGLE SWITCH WITH TEXT (Additional) -->
+                    <!-- START: ICON-BASED TOGGLE SWITCH (Additional) -->
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggleSwitchAdditional" aria-label="Toggle sensitive data" class="sr-only peer">
-                        <!-- Track Container: w-24, h-6, with text elements and slider handle -->
-                        <div class="w-24 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:bg-indigo-700 relative flex items-center justify-between px-1 transition duration-200">
-                            <!-- Text for MASKED (Left - Adjusted to left-4 for better alignment) -->
-                            <span class="absolute left-4 text-xs font-bold text-gray-700 peer-checked:opacity-0 opacity-100 transition-opacity duration-200 z-10 pointer-events-none">MASKED</span>
-                            <!-- Text for UNMASKED (Right - Adjusted to right-4 for better alignment) -->
-                            <span class="absolute right-4 text-xs font-bold text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200 z-10 pointer-events-none">UNMASKED</span>
-                            <!-- Toggle Handle: w-11, h-5 (uses custom CSS for position/movement) -->
-                            <div class="toggle-slider-text"></div>
+                        <input type="checkbox" id="toggleSwitchAdditional" aria-label="Toggle sensitive data visibility" class="sr-only peer">
+                        <div class="toggle-track">
+                            <div class="toggle-handle">
+                                <!-- Closed Eye (Masked/Default) -->
+                                <svg class="icon-masked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                    <path d="M6.61 6.61A13.16 13.16 0 0 0 2 12s3 7 10 7a9.76 9.76 0 0 0 5.44-1.6"></path>
+                                    <line x1="2" y1="2" x2="22" y2="22"></line>
+                                </svg>
+                                <!-- Open Eye (Unmasked) -->
+                                <svg class="icon-unmasked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </div>
                         </div>
                     </label>
-                    <!-- END: TOGGLE SWITCH WITH TEXT -->
+                    <!-- END: ICON-BASED TOGGLE SWITCH -->
                 </div>
 
                 <!-- Bank Account -->
@@ -408,6 +452,7 @@
     if (toggleSwitchGuarantor.checked) { 
       applyFullGuarantor(); 
     } else { 
+      // If manually turned off, mask immediately and clear timer
       applyMaskGuarantor(); 
     }
   });
@@ -442,6 +487,7 @@
     if (toggleSwitchAdditional.checked) { 
       applyFullAdditional(); 
     } else { 
+      // If manually turned off, mask immediately and clear timer
       applyMaskAdditional(); 
     }
   });
