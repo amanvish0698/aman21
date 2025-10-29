@@ -223,7 +223,7 @@
         <!-- VIEW 1: PREDICTIONS -->
         <!-- ============================================== -->
         <div id="predictionsView" class="hidden"> 
-            <div class="bg-white p-5 rounded-xl shadow-lg space-y-4">
+            <div class="loan-card-bg p-5 rounded-xl shadow-lg space-y-4">
                 
                 <!-- Header & Toggle Button (Predictions) -->
                 <div class="flex justify-between items-center pb-2 border-b border-gray-100">
@@ -323,7 +323,7 @@
                 </dl>
                 
                 <!-- Summary Callout -->
-                <div class="bg-yellow-50 text-yellow-800 p-4 rounded-lg text-xs mt-4 font-medium">
+                <div class="pur text-yellow-800 p-4 rounded-lg text-xs mt-4 font-medium">
                     <p id="summaryPredictionsText">Collect **CHEQUE** from **Kaustubh Chaudhry** from **Home** on **28-09-2025** between **5 PM - 7 PM**.</p>
                 </div>
 
@@ -340,7 +340,7 @@
             <div class="space-y-4">
                 
                 <!-- CARD 1: TOTAL AMOUNT & EMI/PMI -->
-                <div class="purple-card-bg p-5 rounded-xl shadow-lg space-y-4">
+                <div class="loan-card-bg p-5 rounded-xl shadow-lg space-y-4">
                     <!-- Total Amount Header -->
                     <div class="flex justify-between items-center pb-3 border-b border-indigo-200/50">
                         <h2 class="text-base font-bold text-indigo-800">Total Amount</h2>
@@ -366,7 +366,7 @@
                 </div>
 
                 <!-- CARD 2: CHARGES BREAKDOWN -->
-                <div class="purple-card-bg p-5 rounded-xl shadow-lg space-y-4">
+                <div class="loan-card-bg p-5 rounded-xl shadow-lg space-y-4">
                     <!-- Charges Details -->
                     <dl class="text-sm space-y-3">
                         <div class="flex justify-between items-center">
@@ -486,6 +486,152 @@
                     </div>
                 </dl>
                 
+            </div>
+        </div>
+        <!-- ============================================== -->
+        <!-- VIEW 3: communication DETAILS (New View) -->
+        <!-- ============================================== -->
+        <div id="communication" class="hidden">
+            <h2 class="text-base font-semibold text-blue-600 mb-4 px-2 border-l-4 border-blue-600 pl-2">CO-APPLICANT DETAILS</h2>
+            
+            <!-- CO-APPLICANT CARD 1 -->
+            <div class="loan-card-bg p-5 rounded-xl shadow-lg space-y-5 mb-6">
+                
+                <!-- Name & Toggle Button (Co-applicant 1) -->
+                <div class="flex justify-between items-center">
+                    <p class="text-lg font-bold text-gray-800">Aman Vishwakarma</p>
+                    <!-- START: ICON-BASED TOGGLE SWITCH (Co-applicant 1) -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleSwitchCoApp1" aria-label="Toggle sensitive data visibility for Co-applicant 1" class="sr-only peer">
+                        <div class="toggle-track">
+                            <div class="toggle-handle">
+                                <!-- Closed Eye (Masked/Default) -->
+                                <svg class="icon-masked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                    <path d="M6.61 6.61A13.16 13.16 0 0 0 2 12s3 7 10 7a9.76 9.76 0 0 0 5.44-1.6"></path>
+                                    <line x1="2" y1="2" x2="22" y2="22"></line>
+                                </svg>
+                                <!-- Open Eye (Unmasked) -->
+                                <svg class="icon-unmasked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </label>
+                    <!-- END: ICON-BASED TOGGLE SWITCH -->
+                </div>
+                
+                <!-- Address -->
+                <div class="flex justify-between items-start pt-2 border-t border-gray-100">
+                    <p id="addrCoApp1" class="text-gray-700 font-medium pr-4">602, 6th Floor, Agrawal B6B Centre Building, Near Malad Industrial Estate</p>
+                    <div class="icon-circle map-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Phone -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="phoneCoApp1" class="text-gray-700 font-medium">9078998878</p>
+                    <div class="icon-circle call-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.5-4.5A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="emailCoApp1" class="text-gray-700 font-medium">aman@gmail.com</p>
+                    <div class="icon-circle mail-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Relation (Non-sensitive) -->
+                <div class="pt-2 border-t border-gray-100">
+                    <p class="text-gray-700 font-medium">Brother</p>
+                </div>
+                
+                <!-- Re-masking notification -->
+                <small id="footCoApp1" class="text-xs text-red-600 mt-4 pt-2 border-t block font-medium" aria-live="polite"></small>
+            </div>
+
+            <!-- CO-APPLICANT CARD 2 -->
+            <div class="coapplicant-card-bg p-5 rounded-xl shadow-lg space-y-5">
+                
+                <!-- Name & Toggle Button (Co-applicant 2) -->
+                <div class="flex justify-between items-center">
+                    <p class="text-lg font-bold text-gray-800">Aman Sharma</p>
+                    <!-- START: ICON-BASED TOGGLE SWITCH (Co-applicant 2) -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleSwitchCoApp2" aria-label="Toggle sensitive data visibility for Co-applicant 2" class="sr-only peer">
+                        <div class="toggle-track">
+                            <div class="toggle-handle">
+                                <!-- Closed Eye (Masked/Default) -->
+                                <svg class="icon-masked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                    <path d="M6.61 6.61A13.16 13.16 0 0 0 2 12s3 7 10 7a9.76 9.76 0 0 0 5.44-1.6"></path>
+                                    <line x1="2" y1="2" x2="22" y2="22"></line>
+                                </svg>
+                                <!-- Open Eye (Unmasked) -->
+                                <svg class="icon-unmasked h-5 w-5 absolute" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </label>
+                    <!-- END: ICON-BASED TOGGLE SWITCH -->
+                </div>
+                
+                <!-- Address -->
+                <div class="flex justify-between items-start pt-2 border-t border-gray-100">
+                    <p id="addrCoApp2" class="text-gray-700 font-medium pr-4">602, 6th Floor, Agrawal B6B Centre Building, Near Malad Industrial Estate</p>
+                    <div class="icon-circle map-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Phone -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="phoneCoApp2" class="text-gray-700 font-medium">9078998878</p>
+                    <div class="icon-circle call-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.5-4.5A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <p id="emailCoApp2" class="text-gray-700 font-medium">aman@gmail.com</p>
+                    <div class="icon-circle mail-icon flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Relation (Non-sensitive) -->
+                <div class="pt-2 border-t border-gray-100">
+                    <p class="text-gray-700 font-medium">Brother</p>
+                </div>
+                
+                <!-- Re-masking notification -->
+                <small id="footCoApp2" class="text-xs text-red-600 mt-4 pt-2 border-t block font-medium" aria-live="polite"></small>
             </div>
         </div>
 
@@ -644,7 +790,7 @@
             <h2 class="text-base font-semibold text-blue-600 mb-4 px-2 border-l-4 border-blue-600 pl-2">GUARANTOR 1</h2>
             
             <!-- Guarantor Card -->
-            <div class="bg-white p-5 rounded-xl shadow-lg space-y-5">
+            <div class="purple-card-bg p-5 rounded-xl shadow-lg space-y-5">
                 
                 <!-- Name & Toggle Button (Guarantor) -->
                 <div class="flex justify-between items-center">
